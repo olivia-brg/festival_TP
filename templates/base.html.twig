@@ -1,17 +1,86 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} 🚀{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+
+        <link rel="stylesheet" href="{{ asset('styles/style.css') }}">
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+</head>
+<body>
+
+
+<nav>
+    <div class="nav-left">
+        <img src="{{ asset('images/afterlogo.svg') }}" alt="Logo" class="logo">
+    </div>
+
+    <h1 class="nav-title">AFTERGLOW FESTIVAL</h1>
+
+    <div class="burger" id="burger-menu">
+        <span></span><span></span><span></span>
+    </div>
+
+    <div class="nav-right">
+        <ul>
+            <li><a href="{{ path('app_main') }}">HOME</a></li>
+            <li><a href="{{ path('wish_list') }}">LINE UP</a></li>
+            <li><a href="{{ path('app_about') }}">ABOUT US</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<div style="z-index: 5; position: relative; height: auto"
+     class="blob-wrapper relative mx-auto aspect-[9/16] w-[360px] max-w-full overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-cyan-400 to-green-400 p-8 duration-500 ease-in -z-50 ">
+    <div class="relative z-10 text-red-600" style="position:relative ;z-index: 10">
+        {% block body %}
         {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const burger = document.getElementById('burger-menu');
+        const navRightUl = document.querySelector('.nav-right ul');
+
+        burger.addEventListener('click', (e) => {
+            e.stopPropagation(); // empêche la fermeture immédiate
+            burger.classList.toggle('open');
+            navRightUl.classList.toggle('open');
+        });
+
+        // Clic en dehors ferme menu si ouvert
+        document.addEventListener('click', () => {
+            if (navRightUl.classList.contains('open')) {
+                navRightUl.classList.remove('open');
+                burger.classList.remove('open');
+            }
+        });
+
+        // Empêche fermeture quand on clique dans le menu
+        navRightUl.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    });
+</script>
+
+
+</body>
+
+
+<footer><p>&copy;Afterglow Festival {{ "now"|date("Y") }}</p></footer>
 </html>
