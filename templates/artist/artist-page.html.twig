@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ artist.name }}{{ parent() }}{% endblock %}
+
+{% block body %}
+
+    <div class="artist-detail">
+        <h1>{{ artist.name }}</h1>
+        <p>
+            {{ artist.style }}<br><br>
+            {{ artist.description }}<br><br>
+            {{ artist.mixDate|date('d/m') }} - {{ artist.mixTime|format_time( 'short') }}
+        </p>
+    </div>
+    <a href="{{ path('artist_list', { 'page': 1 }) }}">< BACK TO LINE UP</a>
+
+{% endblock %}

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} 🚀{% endblock %}</title>
+    <title>{% block title %} | AFTERGLOW FESTIVAL{% endblock %}</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
@@ -27,7 +27,7 @@
         <img src="{{ asset('images/afterlogo.svg') }}" alt="Logo" class="logo">
     </div>
 
-    <h1 class="nav-title">AFTERGLOW FESTIVAL</h1>
+    <a href="{{ path('app_main') }}" class="nav-title"><h1 class="nav-title">AFTERGLOW FESTIVAL</h1></a>
 
     <div class="burger" id="burger-menu">
         <span></span><span></span><span></span>
@@ -36,7 +36,7 @@
     <div class="nav-right">
         <ul>
             <li><a href="{{ path('app_main') }}">HOME</a></li>
-            <li><a href="{{ path('wish_list') }}">LINE UP</a></li>
+            <li><a href="{{ path('artist_list', { 'page': 1 }) }}">LINE UP</a></li>
             <li><a href="{{ path('app_about') }}">ABOUT US</a></li>
         </ul>
     </div>
@@ -82,5 +82,5 @@
 </body>
 
 
-<footer><p>&copy;Afterglow Festival {{ "now"|date("Y") }}</p></footer>
+<footer style="z-index: 10"><p>&copy;Afterglow Festival {{ "now"|date("Y") }}</p></footer>
 </html>

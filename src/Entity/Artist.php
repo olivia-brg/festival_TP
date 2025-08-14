@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\WishRepository;
+use App\Repository\ArtistRepository;
+
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: WishRepository::class)]
-class Wish
+#[ORM\Entity(repositoryClass: ArtistRepository::class)]
+class Artist
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,24 +16,34 @@ class Wish
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $name = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(length: 50)]
-    private ?string $author = null;
+    private ?string $style = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dateCreated = null;
+    private ?\DateTime $mixDate = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
-    private ?\DateTime $dateUpdated = null;
+    #[ORM\Column(type: Types::TIME_MUTABLE)]
+    private ?\DateTime $mixTime = null;
+
+    public function getMixTime(): ?\DateTime
+    {
+        return $this->mixTime;
+    }
+
+    public function setMixTime(\DateTime $mixTime): static
+    {
+        $this->mixTime = $mixTime;
+        return $this;
+    }
 
     public function __construct()
     {
-        $this->isPublished = false;
-        $this->dateCreated = new \DateTime();
+        $this->mixDate = new \DateTime();
     }
 
     public function getId(): ?int
@@ -40,14 +51,14 @@ class Wish
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getName(): ?string
     {
-        return $this->title;
+        return $this->name;
     }
 
-    public function setTitle(string $title): static
+    public function setName(string $name): static
     {
-        $this->title = $title;
+        $this->name = $name;
 
         return $this;
     }
@@ -64,26 +75,26 @@ class Wish
         return $this;
     }
 
-    public function getAuthor(): ?string
+    public function getStyle(): ?string
     {
-        return $this->author;
+        return $this->style;
     }
 
-    public function setAuthor(string $author): static
+    public function setStyle(string $style): static
     {
-        $this->author = $author;
+        $this->style = $style;
 
         return $this;
     }
 
-    public function getDateCreated(): ?\DateTime
+    public function getMixDate(): ?\DateTime
     {
-        return $this->dateCreated;
+        return $this->mixDate;
     }
 
-    public function setDateCreated(\DateTime $dateCreated): static
+    public function setMixDate(\DateTime $mixDate): static
     {
-        $this->dateCreated = $dateCreated;
+        $this->mixDate = $mixDate;
 
         return $this;
     }

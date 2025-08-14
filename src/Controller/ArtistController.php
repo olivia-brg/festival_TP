@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Controller;
+
+use App\Repository\ArtistRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/artist', name: 'artist_')]
+final class ArtistController extends AbstractController
+{
+
+    #[Route('/page/{page}', name: 'list', requirements: ['page' => '\d+',], methods: ['GET'])]
+    public function list(ArtistRepository $artistRepository, int $page, ParameterBagInterface $parameterBag): Response
+    {
+        $styleList = $parameterBag->get('style');
+        $nbPerPage = $parameterBag->get('artist')['nb_max'];
+        $offset = ($page - 1) * $nbPerPage;
+        $order = [
+            'mixDate' => 'ASC',
+            'mixTime' => 'ASC',
+        ];
+
+        $artistsList = $artistRepository->findBy(
+            [],
+            $order,
+            $nbPerPage,
+            $offset,
+        );
+
+        $total = $artistRepository->count();
+        $totalPages = ceil($total / $nbPerPage);
+
+        return $this->render('artist/index.html.twig', [
+            'artistsList' => $artistsList,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'link' => 'artist_list',
+            'styleList' => $styleList,
+        ]);
+    }
+
+    #[Route('/filter-style', name: 'filter_style', methods: ['POST'])]
+    public function filterStyle(Request $request): Response
+    {
+        // Récupère proprement la valeur postée
+        $style = $request->request->get('style');
+
+        if (!$style) {
+            // au besoin: rediriger vers la liste générale si rien n'est sélectionné
+            return $this->redirectToRoute('artist_list');
+        }
+
+        // Va sur la page 1 du style choisi
+        return $this->redirectToRoute('artist_style_list', [
+            'style' => $style,
+            'page'  => 1,
+        ]);
+    }
+
+    #[Route('/id/{id}', name: 'id', requirements: ['id' => '\d+'])]
+    public function detail(int $id, ArtistRepository $artistRepository): Response
+    {
+        $artist = $artistRepository->find($id);
+        return $this->render('artist/artist-page.html.twig', [
+            'artist' => $artist
+        ]);
+    }
+
+
+    #[Route('/style/{style}/page/{page}', name: 'style_list')]
+    public function listByStyle(String $style, int $page, ArtistRepository $artistRepository, ParameterBagInterface $parameterBag): Response
+    {
+        $styleList = $parameterBag->get('style');
+        $nbPerPage = $parameterBag->get('artist')['nb_max'];
+        $offset = ($page - 1) * $nbPerPage;
+
+        $artistsList = $artistRepository->findByStyleWithDQL(
+            $style,
+            $nbPerPage,
+            $offset
+        );
+
+        $total = $artistRepository->countByStyle($style);
+        $totalPages = ceil($total / $nbPerPage);
+
+
+        return $this->render('artist/index.html.twig', [
+            'artistsList' => $artistsList,
+            'page' => $page,
+            'style' => $style,
+            'totalPages' => $totalPages,
+            'link' => 'artist_style_list',
+            'styleList' => $styleList
+        ]);
+    }
+
+
+}
