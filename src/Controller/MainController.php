@@ -22,4 +22,10 @@ class MainController extends AbstractController
     {
         return $this->render("about-us.html.twig");
     }
+
+    #[Route('/error', name: 'error')]
+    public function contact(): Response
+    {
+        return $this->render("error.html.twig");
+    }
 }

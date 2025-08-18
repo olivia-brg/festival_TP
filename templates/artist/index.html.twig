@@ -8,6 +8,7 @@
     <form method="POST" action="{{ path('artist_filter_style') }}">
         <label for="style">STYLE :</label>
         <select name="style" id="style">
+        <option value="all">All</option>
             {% for s in styleList %}
                 {# Optionnel: marque l’option actuelle comme sélectionnée #}
                 <option value="{{ s }}">{{ s }}</option>

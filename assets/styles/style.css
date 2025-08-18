@@ -130,11 +130,15 @@ footer {
 
 /* Body block */
 body > main, body > div {
-    flex-grow: 1;
     padding: 3rem;
     max-width: 1200px;
     margin: 0 auto;
 }
+
+body > main, body > div:not(.flash) {
+    flex-grow: 1;
+}
+
 
 /* Responsive simple */
 @media (max-width: 768px) {
@@ -152,6 +156,7 @@ body > main, body > div {
         z-index: 1500;
         width: max-content;
     }
+
     .nav-right ul.open {
         display: flex !important;
     }
@@ -178,6 +183,7 @@ body > main, body > div {
     animation-timing-function: ease-in-out;
     background: linear-gradient(135deg, #22d, #6d2);
 }
+
 .blob-wrapper::before {
     width: 70%;
     height: 50%;
@@ -186,6 +192,7 @@ body > main, body > div {
     animation-name: blob;
     animation-direction: normal;
 }
+
 .blob-wrapper::after {
     width: 70%;
     height: 80%;
@@ -194,23 +201,37 @@ body > main, body > div {
     animation-name: blob-reverse;
     animation-direction: reverse;
 }
+
 @keyframes blob {
-    0%, 100% { border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%; transform: translate(0, 0) scale(1); }
-    50% { border-radius: 30% 70% 60% 40% / 40% 40% 60% 60%; transform: translate(10px, 10px) scale(1.1); }
+    0%, 100% {
+        border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%;
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        border-radius: 30% 70% 60% 40% / 40% 40% 60% 60%;
+        transform: translate(10px, 10px) scale(1.1);
+    }
 }
+
 @keyframes blob-reverse {
-    0%, 100% { border-radius: 30% 70% 60% 40% / 40% 40% 60% 60%; transform: translate(0, 0) scale(1); }
-    50% { border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%; transform: translate(-10px, -10px) scale(1.1); }
+    0%, 100% {
+        border-radius: 30% 70% 60% 40% / 40% 40% 60% 60%;
+        transform: translate(0, 0) scale(1);
+    }
+    50% {
+        border-radius: 60% 40% 30% 70% / 60% 60% 40% 40%;
+        transform: translate(-10px, -10px) scale(1.1);
+    }
 }
 
 /* Titres globaux */
-h1 , h2, h3  {
+h1, h2, h3 {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.1em;
 }
 
-h1 :not(.nav-title), h2, h3  {
+h1 :not(.nav-title), h2, h3 {
 
     margin-bottom: 1.5rem;
 }
@@ -267,6 +288,7 @@ table tr:hover {
 table a {
     color: #ffebb9;
 }
+
 table a:hover {
     color: black;
 }
@@ -279,6 +301,7 @@ table a:hover {
     border-radius: 6px;
     margin-bottom: 0.8rem;
 }
+
 /* Formulaire global */
 form {
     background: rgba(20, 20, 20, 0.85);
@@ -316,6 +339,7 @@ form select {
     transition: all 0.3s ease;
     box-shadow: 0 0 6px rgba(255, 215, 0, 0.2);
 }
+
 form select:not(.style) {
     width: auto;
 
@@ -359,4 +383,64 @@ form input[type="submit"]:hover {
 form textarea {
     min-height: 120px;
     resize: vertical;
+}
+
+
+.flash-container {
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    gap: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.flash {
+    gap: 1rem;
+    z-index: 3000;
+}
+
+/* Styles généraux des messages */
+div[class^="flash-"] {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    color: #0a0a0a;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    animation: flash-in 0.4s ease forwards;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+/* Animation d’entrée */
+@keyframes flash-in {
+    0% {
+        transform: translateY(50%) scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Types de flash */
+.flash-success {
+    background: #22d622; /* vert vif */
+    box-shadow: 0 0 12px #22d622;
+}
+
+.flash-error {
+    background: #ff4c4c; /* rouge vif */
+    box-shadow: 0 0 12px #ff4c4c;
+}
+
+.flash-warning {
+    background: #ffd633; /* or / jaune */
+    box-shadow: 0 0 12px #ffd633;
+}
+
+.flash-info {
+    background: #3399ff; /* bleu clair */
+    box-shadow: 0 0 12px #3399ff;
 }

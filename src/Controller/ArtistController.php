@@ -49,12 +49,10 @@ final class ArtistController extends AbstractController
     #[Route('/filter-style', name: 'filter_style', methods: ['POST'])]
     public function filterStyle(Request $request): Response
     {
-        // Récupère proprement la valeur postée
         $style = $request->request->get('style');
 
-        if (!$style) {
-            // au besoin: rediriger vers la liste générale si rien n'est sélectionné
-            return $this->redirectToRoute('artist_list');
+        if ($style == "all" ) {
+            return $this->redirectToRoute('artist_list', ['page' => 1]);
         }
 
         // Va sur la page 1 du style choisi
@@ -68,6 +66,12 @@ final class ArtistController extends AbstractController
     public function detail(int $id, ArtistRepository $artistRepository): Response
     {
         $artist = $artistRepository->find($id);
+        if (!$artist) {
+            $this->addFlash('error', 'Artist not found');
+            return $this->render('error.html.twig', [
+                'status' => 'artist not found',
+            ]);
+        }
         return $this->render('artist/artist-page.html.twig', [
             'artist' => $artist
         ]);
@@ -107,10 +111,13 @@ final class ArtistController extends AbstractController
         $artist = new Artist();
         $form = $this->createForm(ArtistType::class, $artist);
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em->persist($artist);
             $em->flush();
+
+            $this->addFlash('success', 'Artist added successfully');
 
             return $this->redirectToRoute('artist_id', ['id' => $artist->getId()]);
         }
@@ -121,4 +128,21 @@ final class ArtistController extends AbstractController
     }
 
 
+    #[Route('/update/{id}', name: 'update', requirements: ['id' => '\d+'])]
+    public function updateArtist(Artist $artist, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(ArtistType::class, $artist);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            $this->addFlash('success', 'Artist updated successfully');
+
+            return $this->redirectToRoute('artist_id', ['id' => $artist->getId()]);
+        }
+
+        return $this->render('artist/edit.html.twig', [
+            'artist_form' => $form,
+        ]);
+    }
 }

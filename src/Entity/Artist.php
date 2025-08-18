@@ -30,17 +30,6 @@ class Artist
     #[ORM\Column(type: Types::TIME_MUTABLE)]
     private ?\DateTime $mixTime = null;
 
-    public function getMixTime(): ?\DateTime
-    {
-        return $this->mixTime;
-    }
-
-    public function setMixTime(\DateTime $mixTime): static
-    {
-        $this->mixTime = $mixTime;
-        return $this;
-    }
-
     public function __construct()
     {
         $this->mixDate = new \DateTime();
@@ -99,15 +88,15 @@ class Artist
         return $this;
     }
 
-    public function getDateUpdated(): ?\DateTime
+    public function getMixTime(): ?\DateTime
     {
-        return $this->dateUpdated;
+        return $this->mixTime;
     }
 
-    public function setDateUpdated(?\DateTime $dateUpdated): static
+    public function setMixTime(\DateTime $mixTime): static
     {
-        $this->dateUpdated = $dateUpdated;
-
+        $this->mixTime = $mixTime;
         return $this;
     }
+
 }

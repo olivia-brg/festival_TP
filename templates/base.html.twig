@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %} | AFTERGLOW FESTIVAL{% endblock %}</title>
-    <link rel="icon" type="image/x-icon" href="{{ asset('images/favicon.png') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('images/logoAfterglow.png') }}">
     <link rel="icon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -42,6 +42,15 @@
     </div>
 </nav>
 
+<div class="flash-container">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="flash-{{ type }} flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
 
 <div style="z-index: 5; position: relative; height: auto"
      class="blob-wrapper relative mx-auto aspect-[9/16] w-[360px] max-w-full overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-cyan-400 to-green-400 p-8 duration-500 ease-in -z-50 ">
