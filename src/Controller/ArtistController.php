@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Artist;
+use App\Form\ArtistType;
 use App\Repository\ArtistRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -95,6 +98,25 @@ final class ArtistController extends AbstractController
             'totalPages' => $totalPages,
             'link' => 'artist_style_list',
             'styleList' => $styleList
+        ]);
+    }
+
+    #[Route('/add', name: 'add')]
+    public function addArtist(Request $request, EntityManagerInterface $em): Response
+    {
+        $artist = new Artist();
+        $form = $this->createForm(ArtistType::class, $artist);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $em->persist($artist);
+            $em->flush();
+
+            return $this->redirectToRoute('artist_id', ['id' => $artist->getId()]);
+        }
+
+        return $this->render('artist/edit.html.twig', [
+            'artist_form' => $form,
         ]);
     }
 

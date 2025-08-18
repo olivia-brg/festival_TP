@@ -57,12 +57,12 @@ Encore
         config.corejs = '3.38';
     })
 
-    .enablePostCssLoader((options) => {
-        options.postcssOptions = {
-            // the directory where the postcss.config.js file is stored
-            config: path.resolve(__dirname, '', 'config.js'),
-        };
-    })
+    // .enablePostCssLoader((options) => {
+    //     options.postcssOptions = {
+    //         // the directory where the postcss.config.js file is stored
+    //         config: path.resolve(__dirname, '', 'config.js'),
+    //     };
+    // })
 
 // enables Sass/SCSS support
 //.enableSassLoader()
