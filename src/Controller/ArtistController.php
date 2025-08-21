@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Artist;
 use App\Form\ArtistType;
 use App\Repository\ArtistRepository;
+use App\Repository\MusicGenreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -16,10 +17,40 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ArtistController extends AbstractController
 {
 
+//    #[Route('/page/{page}', name: 'list', requirements: ['page' => '\d+',], methods: ['GET'])]
+//    public function list(ArtistRepository $artistRepository, int $page, ParameterBagInterface $parameterBag): Response
+//    {
+//        $styleList = $parameterBag->get('style');
+//        $nbPerPage = $parameterBag->get('artist')['nb_max'];
+//        $offset = ($page - 1) * $nbPerPage;
+//        $order = [
+//            'mixDate' => 'ASC',
+//            'mixTime' => 'ASC',
+//        ];
+//
+//        $artistsList = $artistRepository->findBy(
+//            [],
+//            $order,
+//            $nbPerPage,
+//            $offset,
+//        );
+//
+//        $total = $artistRepository->count();
+//        $totalPages = ceil($total / $nbPerPage);
+//
+//        return $this->render('artist/edit.html.twig', [
+//            'artistsList' => $artistsList,
+//            'page' => $page,
+//            'totalPages' => $totalPages,
+//            'link' => 'artist_list',
+//            'styleList' => $styleList,
+//        ]);
+//    }
+
     #[Route('/page/{page}', name: 'list', requirements: ['page' => '\d+',], methods: ['GET'])]
-    public function list(ArtistRepository $artistRepository, int $page, ParameterBagInterface $parameterBag): Response
+    public function list(ArtistRepository $artistRepository, MusicGenreRepository $musicGenreRepository, int $page, ParameterBagInterface $parameterBag): Response
     {
-        $styleList = $parameterBag->get('style');
+        $styleList = $musicGenreRepository->findAll();
         $nbPerPage = $parameterBag->get('artist')['nb_max'];
         $offset = ($page - 1) * $nbPerPage;
         $order = [
@@ -27,9 +58,7 @@ final class ArtistController extends AbstractController
             'mixTime' => 'ASC',
         ];
 
-        $artistsList = $artistRepository->findBy(
-            [],
-            $order,
+        $artistsList = $artistRepository->getArtistWithInfos(
             $nbPerPage,
             $offset,
         );
@@ -37,12 +66,12 @@ final class ArtistController extends AbstractController
         $total = $artistRepository->count();
         $totalPages = ceil($total / $nbPerPage);
 
-        return $this->render('artist/index.html.twig', [
+        return $this->render('artist/artist-list.html.twig', [
             'artistsList' => $artistsList,
             'page' => $page,
             'totalPages' => $totalPages,
             'link' => 'artist_list',
-            'styleList' => $styleList,
+            'styleList' => $styleList
         ]);
     }
 
@@ -51,14 +80,14 @@ final class ArtistController extends AbstractController
     {
         $style = $request->request->get('style');
 
-        if ($style == "all" ) {
+        if ($style == "all") {
             return $this->redirectToRoute('artist_list', ['page' => 1]);
         }
 
         // Va sur la page 1 du style choisi
         return $this->redirectToRoute('artist_style_list', [
             'style' => $style,
-            'page'  => 1,
+            'page' => 1,
         ]);
     }
 
@@ -79,9 +108,8 @@ final class ArtistController extends AbstractController
 
 
     #[Route('/style/{style}/page/{page}', name: 'style_list')]
-    public function listByStyle(String $style, int $page, ArtistRepository $artistRepository, ParameterBagInterface $parameterBag): Response
+    public function listByStyle(string $style, int $page, ArtistRepository $artistRepository, ParameterBagInterface $parameterBag): Response
     {
-        $styleList = $parameterBag->get('style');
         $nbPerPage = $parameterBag->get('artist')['nb_max'];
         $offset = ($page - 1) * $nbPerPage;
 
@@ -94,11 +122,15 @@ final class ArtistController extends AbstractController
         $total = $artistRepository->countByStyle($style);
         $totalPages = ceil($total / $nbPerPage);
 
+        if ($totalPages == 0) {
+            $this->addFlash('error', 'No artist found for this style');
+            return $this->redirectToRoute('artist_list', ['page' => 1]);
+        }
 
-        return $this->render('artist/index.html.twig', [
+
+        return $this->render('artist/artist-list.html.twig', [
             'artistsList' => $artistsList,
             'page' => $page,
-            'style' => $style,
             'totalPages' => $totalPages,
             'link' => 'artist_style_list',
             'styleList' => $styleList
@@ -113,7 +145,7 @@ final class ArtistController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
+//            dd($artist->getMusicGenres()->toArray());
             $em->persist($artist);
             $em->flush();
 
@@ -144,5 +176,19 @@ final class ArtistController extends AbstractController
         return $this->render('artist/edit.html.twig', [
             'artist_form' => $form,
         ]);
+    }
+
+    #[Route('/delete/{id}', name: 'delete', requirements: ['id' => '\d+'])]
+    public function deleteArtist(Artist $artist, EntityManagerInterface $em, Request $request): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $artist->getId(), $request->get('token'))) {
+            $em->remove($artist);
+            $em->flush();
+            $this->addFlash('success', 'Artist deleted successfully');
+        } else {
+            $this->addFlash('error', 'Delete failed');
+        }
+
+        return $this->redirectToRoute('artist_list', ['page' => 1]);
     }
 }

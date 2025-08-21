@@ -8,13 +8,14 @@
     <form method="POST" action="{{ path('artist_filter_style') }}">
         <label for="style">STYLE :</label>
         <select name="style" id="style">
-        <option value="all">All</option>
+            <option value="all">All</option>
             {% for s in styleList %}
                 {# Optionnel: marque l’option actuelle comme sélectionnée #}
                 <option value="{{ s }}">{{ s }}</option>
             {% endfor %}
         </select>
         <button type="submit">FIND</button>
+        <br>
     </form>
 
 
@@ -42,25 +43,56 @@
                 {% endif %}
             {% endif %}
         </div>
-        <table>
+        <table style="white-space: nowrap;">
             <tr>
                 <th>Artist</th>
                 <th>Date</th>
                 <th>Mix</th>
                 <th>Style</th>
+                <th>Musics</th>
             </tr>
             {% for artist in artistsList %}
-                <tr>
-                    <td><a class="artist-name" href="{{ path('artist_id', { 'id': artist.id }) }}">{{ artist.name }}</a>
+                <tr class="clickable" onclick="window.location.href = '{{ path('artist_id', { 'id': artist.id }) }}';">
+                    <td>{{ artist.name }}
                     </td>
                     <td>{{ artist.mixDate|date('d/m') }}</td>
                     <td>{{ artist.mixTime|format_time( 'short') }}</td>
-                    <td>{{ artist.style }}</td>
-
+                    <td>
+                        {% for genre in artist.musicGenres %}
+                            {{ genre }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for music in artist.musics %}
+                            - {{ music.title }}<br>
+                        {% endfor %}
+                    </td>
                 </tr>
 
             {% endfor %}
         </table>
+
+        <div style="display: grid; grid-template-columns: 50% 50%; ">
+            {% if page > 1 %}
+                {% if link == 'artist_list' %}
+                    <a style="justify-self: end;" href="{{ path('artist_list', { 'page' : page - 1 }) }}">< PREVIOUS</a>
+                {% elseif link == 'artist_style_list' %}
+                    <a style="justify-self: end;"
+                       href="{{ path('artist_style_list', {'style' : style, 'page' : page - 1 }) }}">< PREVIOUS</a>
+                {% endif %}
+
+            {% else %}
+                &nbsp;
+            {% endif %}
+            {% if page < totalPages %}
+                {% if link == 'artist_list' %}
+                    <a style="justify-self: start;" href="{{ path('artist_list', { 'page' : page + 1 }) }}">NEXT ></a>
+                {% elseif link == 'artist_style_list' %}
+                    <a style="justify-self: start;"
+                       href="{{ path('artist_style_list', {'style': style, 'page': page + 1}) }}">NEXT ></a>
+                {% endif %}
+            {% endif %}
+        </div>
     {% endif %}
 
 {% endblock %}

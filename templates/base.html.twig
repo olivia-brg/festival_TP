@@ -37,6 +37,8 @@
         <ul>
             <li><a href="{{ path('app_main') }}">HOME</a></li>
             <li><a href="{{ path('artist_list', { 'page': 1 }) }}">LINE UP</a></li>
+            <li><a href="{{ path('music_add') }}">ADD MUSIC</a></li>
+            <li><a href="{{ path('artist_add') }}">ADD ARTIST</a></li>
             <li><a href="{{ path('app_about') }}">ABOUT US</a></li>
         </ul>
     </div>
@@ -52,9 +54,8 @@
     {% endfor %}
 </div>
 
-<div style="z-index: 5; position: relative; height: auto"
-     class="blob-wrapper relative mx-auto aspect-[9/16] w-[360px] max-w-full overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-cyan-400 to-green-400 p-8 duration-500 ease-in -z-50 ">
-    <div class="relative z-10 text-red-600" style="position:relative ;z-index: 10">
+<div class="blob-wrapper">
+    <div>
         {% block body %}
         {% endblock %}
     </div>
@@ -91,5 +92,5 @@
 </body>
 
 
-<footer style="z-index: 10"><p>&copy;Afterglow Festival {{ "now"|date("Y") }}</p></footer>
+<footer><p>&copy;Afterglow Festival {{ "now"|date("Y") }}</p></footer>
 </html>

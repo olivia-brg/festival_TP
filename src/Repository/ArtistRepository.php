@@ -4,9 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Artist;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
-use PhpParser\Node\Expr\Array_;
-use function Symfony\Component\String\s;
 
 /**
  * @extends ServiceEntityRepository<Artist>
@@ -59,12 +58,26 @@ class ArtistRepository extends ServiceEntityRepository
 
     public function countByStyle(string $style): int
     {
-        return (int) $this->createQueryBuilder('a')
+        return (int)$this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
             ->where('a.style = :style')
             ->setParameter('style', $style)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    public function getArtistWithInfos(int $nbPerPage, int $offset): Paginator
+    {
+        $q = $this->createQueryBuilder('a')
+            ->orderBy('a.mixDate', 'ASC')
+            ->addOrderBy('a.mixTime', 'ASC')
+            ->leftJoin('a.musics', 'm')
+            ->addSelect('m')
+            ->setFirstResult($offset)
+            ->setMaxResults($nbPerPage)
+            ->getQuery();
+
+        return new Paginator($q);
     }
 
 

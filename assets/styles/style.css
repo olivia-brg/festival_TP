@@ -126,6 +126,7 @@ footer {
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: 10;
 }
 
 /* Body block */
@@ -170,18 +171,31 @@ body > main, body > div:not(.flash) {
     }
 }
 
+.blob-wrapper {
+    z-index: 5;
+    position: relative;
+    height: auto
+}
+
+.blob-wrapper div {
+    z-index: 5;
+    position: relative;
+    height: auto
+}
+
 /* Blob animation */
 .blob-wrapper::before,
 .blob-wrapper::after {
+
     content: "";
-    position: absolute;
+    position: fixed;
     border-radius: 50% / 60%;
     filter: blur(50px);
-    opacity: 0.8;
+    opacity: 0.5;
     animation-duration: 7s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
-    background: linear-gradient(135deg, #22d, #6d2);
+    background: linear-gradient(135deg, rgba(34, 34, 221, 0.47), rgba(102, 221, 34, 0.48));
 }
 
 .blob-wrapper::before {
@@ -283,6 +297,16 @@ table tr:nth-child(even) {
 table tr:hover {
     background: rgba(255, 215, 0, 0.15);
     transition: background 0.3s ease;
+}
+
+table .clickable {
+    cursor: pointer;
+}
+
+table .clickable:hover {
+    background: rgba(255, 215, 0, 0.42);
+    color: #0a0a0a;
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.42);;
 }
 
 table a {
@@ -407,9 +431,12 @@ div[class^="flash-"] {
     color: #0a0a0a;
     font-weight: 700;
     letter-spacing: 0.05em;
-    animation: flash-in 0.4s ease forwards;
+    animation: flash-in 5s ease forwards;
     max-width: 300px;
     word-wrap: break-word;
+    position: fixed;
+    left: 0;
+    top: 3.2em;
 }
 
 /* Animation d’entrée */
@@ -418,9 +445,19 @@ div[class^="flash-"] {
         transform: translateY(50%) scale(0.8);
         opacity: 0;
     }
-    100% {
+    7% {
         transform: translateY(0) scale(1);
         opacity: 1;
+    }
+
+    93% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(50%) scale(0.8);
+        opacity: 0;
     }
 }
 

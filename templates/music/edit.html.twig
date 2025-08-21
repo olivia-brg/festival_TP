@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add a music{{ parent() }}{% endblock %}
+
+{% block body %}
+
+    {% if mode == 'add' %}
+    <h2>Add a music</h2>
+    {% else %}
+    <h2>Edit a music</h2>
+
+    {% endif %}
+    {{ form(music_form) }}
+
+{% endblock %}
