@@ -12,6 +12,7 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/artist', name: 'artist_')]
 final class ArtistController extends AbstractController
@@ -48,6 +49,7 @@ final class ArtistController extends AbstractController
 //    }
 
     #[Route('/page/{page}', name: 'list', requirements: ['page' => '\d+',], methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function list(ArtistRepository $artistRepository, MusicGenreRepository $musicGenreRepository, int $page, ParameterBagInterface $parameterBag): Response
     {
         $styleList = $musicGenreRepository->findAll();
@@ -76,6 +78,7 @@ final class ArtistController extends AbstractController
     }
 
     #[Route('/filter-style', name: 'filter_style', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
     public function filterStyle(Request $request): Response
     {
         $style = $request->request->get('style');
@@ -92,6 +95,7 @@ final class ArtistController extends AbstractController
     }
 
     #[Route('/id/{id}', name: 'id', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_USER')]
     public function detail(int $id, ArtistRepository $artistRepository): Response
     {
         $artist = $artistRepository->find($id);
@@ -108,6 +112,7 @@ final class ArtistController extends AbstractController
 
 
     #[Route('/style/{style}/page/{page}', name: 'style_list')]
+    #[IsGranted('ROLE_USER')]
     public function listByStyle(string $style, int $page, ArtistRepository $artistRepository, ParameterBagInterface $parameterBag): Response
     {
         $nbPerPage = $parameterBag->get('artist')['nb_max'];
@@ -132,12 +137,12 @@ final class ArtistController extends AbstractController
             'artistsList' => $artistsList,
             'page' => $page,
             'totalPages' => $totalPages,
-            'link' => 'artist_style_list',
-            'styleList' => $styleList
+            'link' => 'artist_style_list'
         ]);
     }
 
     #[Route('/add', name: 'add')]
+    #[IsGranted('ROLE_ADMIN')]
     public function addArtist(Request $request, EntityManagerInterface $em): Response
     {
         $artist = new Artist();
@@ -161,6 +166,7 @@ final class ArtistController extends AbstractController
 
 
     #[Route('/update/{id}', name: 'update', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function updateArtist(Artist $artist, Request $request, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(ArtistType::class, $artist);
@@ -179,6 +185,7 @@ final class ArtistController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'delete', requirements: ['id' => '\d+'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteArtist(Artist $artist, EntityManagerInterface $em, Request $request): Response
     {
         if ($this->isCsrfTokenValid('delete' . $artist->getId(), $request->get('token'))) {

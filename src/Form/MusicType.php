@@ -4,10 +4,11 @@ namespace App\Form;
 
 use App\Entity\artist;
 use App\Entity\Music;
+use App\Entity\MusicGenre;
 use App\Repository\ArtistRepository;
+use App\Repository\MusicGenreRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -27,29 +28,37 @@ class MusicType extends AbstractType
                 ]
             ])
             ->add('releaseDate', DateType::class)
-            ->add('style', ChoiceType::class, [
+            ->add('musicGenres', EntityType::class, [
+                'label' => 'Style',
                 'attr' => [
                     'class' => 'style'
                 ],
-                'choices' => [
-                    'Neurofunk' => 'Neurofunk',
-                    'Liquid' => 'Liquid',
-                    'Jungle' => 'Jungle',
-                    'Ragga Jungle' => 'Ragga Jungle',
-                    'Jump Up' => 'Jump Up',
-                ]
+                'placeholder' => 'Select a style',
+                'class' => MusicGenre::class,
+                'choice_label' => 'genre',
+                'multiple' => true,
+                'by_reference' => false,
+                'query_builder' => function (MusicGenreRepository $ar) {
+                    return $ar->createQueryBuilder('mg')
+                        ->orderBy('mg.genre', 'ASC');
+                }
             ])
-            ->add('artist', EntityType::class, [
+            ->add('artists', EntityType::class, [
+                'label' => 'Artists',
+                'attr' => [
+                    'class' => 'style'
+                ],
                 'placeholder' => 'Select an artist',
                 'class' => Artist::class,
                 'choice_label' => 'name',
+                'multiple' => true,
+                'by_reference' => false,
                 'query_builder' => function (ArtistRepository $ar) {
-                return $ar->createQueryBuilder('a')
-                    ->orderBy('a.name', 'ASC');
+                    return $ar->createQueryBuilder('a')
+                        ->orderBy('a.name', 'ASC');
                 }
             ])
-            ->add('submit', SubmitType::class, [])
-        ;
+            ->add('submit', SubmitType::class, []);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

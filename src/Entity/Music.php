@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\MusicRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -23,21 +24,26 @@ class Music
     private ?string $title = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $releaseDate = null;
+    private ?DateTime $releaseDate = null;
 
-    #[ORM\ManyToOne(inversedBy: 'musics')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?artist $artist = null;
-
+    /**
+     * @var Collection<int, Artist>
+     */
+    #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'musics')]
+    private Collection $artists;
     /**
      * @var Collection<int, MusicGenre>
      */
-    #[ORM\ManyToMany(targetEntity: MusicGenre::class, mappedBy: 'artist')]
+//    #[ORM\ManyToMany(targetEntity: MusicGenre::class, mappedBy: 'artist')]
+//    private Collection $musicGenres;
+    #[ORM\ManyToMany(targetEntity: MusicGenre::class, inversedBy: 'music')]
+    #[ORM\JoinTable(name: "music_genre_music")]
     private Collection $musicGenres;
 
     public function __construct()
     {
         $this->musicGenres = new ArrayCollection();
+        $this->artists = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -57,26 +63,38 @@ class Music
         return $this;
     }
 
-    public function getReleaseDate(): ?\DateTime
+    public function getReleaseDate(): ?DateTime
     {
         return $this->releaseDate;
     }
 
-    public function setReleaseDate(\DateTime $releaseDate): static
+    public function setReleaseDate(DateTime $releaseDate): static
     {
         $this->releaseDate = $releaseDate;
 
         return $this;
     }
 
-    public function getArtist(): ?artist
+    public function getArtists(): Collection
     {
-        return $this->artist;
+        return $this->artists;
     }
 
-    public function setArtist(?artist $artist): static
+    public function addArtist(Artist $artist): static
     {
-        $this->artist = $artist;
+        if (!$this->artists->contains($artist)) {
+            $this->artists->add($artist);
+            $artist->addMusic($this); // synchronisation
+        }
+
+        return $this;
+    }
+
+    public function removeArtist(Artist $artist): static
+    {
+        if ($this->artists->removeElement($artist)) {
+            $artist->removeMusic($this); // synchronisation
+        }
 
         return $this;
     }

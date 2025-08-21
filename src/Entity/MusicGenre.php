@@ -24,10 +24,15 @@ class MusicGenre
     #[ORM\ManyToMany(targetEntity: Artist::class, inversedBy: 'musicGenres')]
     private Collection $artists;
 
+//    /**
+//     * @var Collection<int, Music>
+//     */
+//    #[ORM\ManyToMany(targetEntity: Music::class, inversedBy: 'genres')]
+//    private Collection $music;
     /**
      * @var Collection<int, Music>
      */
-    #[ORM\ManyToMany(targetEntity: Music::class, inversedBy: 'genres')]
+    #[ORM\ManyToMany(targetEntity: Music::class, mappedBy: 'musicGenres')]
     private Collection $music;
 
     public function __construct()

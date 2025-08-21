@@ -24,8 +24,14 @@ final class MusicController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Music added successfully');
+            $firstArtist = $music->getArtists()->first();
+            if ($firstArtist) {
+                return $this->redirectToRoute('artist_id', ['id' => $firstArtist->getId()]);
+            }
 
-            return $this->redirectToRoute('artist_id', ['id' => $music->getArtist()->getId()]);
+            return $this->redirectToRoute('artist_list');
+
+//            return $this->redirectToRoute('artist_id', ['id' => $music->getArtists()->()]);
         }
 
         return $this->render('music/edit.html.twig', [

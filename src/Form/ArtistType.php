@@ -39,6 +39,7 @@ class ArtistType extends AbstractType
             ->add('mixDate', DateType::class)
             ->add('mixTime', TimeType::class)
             ->add('musicGenres', EntityType::class, [
+                'label' => 'Style',
                 'attr' => [
                     'class' => 'style'
                 ],

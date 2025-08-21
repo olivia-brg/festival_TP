@@ -28,10 +28,6 @@ class Artist
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\Choice(choices: ['Liquid', 'Neurofunk', 'Jump Up', 'Jungle', 'Ragga Jungle'])]
-    private ?string $style = null;
-
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     #[Assert\NotBlank]
     #[Assert\GreaterThan('today', message: 'You cannot mix in the past')]
@@ -41,10 +37,11 @@ class Artist
     #[Assert\NotBlank]
     private ?\DateTime $mixTime = null;
 
+
     /**
      * @var Collection<int, Music>
      */
-    #[ORM\OneToMany(targetEntity: Music::class, mappedBy: 'artist', orphanRemoval: true)]
+    #[ORM\ManyToMany(targetEntity: Music::class, mappedBy: 'artists')]
     private Collection $musics;
 
     /**
@@ -89,18 +86,6 @@ class Artist
         return $this;
     }
 
-    public function getStyle(): ?string
-    {
-        return $this->style;
-    }
-
-    public function setStyle(string $style): static
-    {
-        $this->style = $style;
-
-        return $this;
-    }
-
     public function getMixDate(): ?\DateTime
     {
         return $this->mixDate;
@@ -136,7 +121,7 @@ class Artist
     {
         if (!$this->musics->contains($music)) {
             $this->musics->add($music);
-            $music->setArtist($this);
+            $music->addArtist($this);
         }
 
         return $this;
@@ -146,8 +131,8 @@ class Artist
     {
         if ($this->musics->removeElement($music)) {
             // set the owning side to null (unless already changed)
-            if ($music->getArtist() === $this) {
-                $music->setArtist(null);
+            if ($music->getArtists() === $this) {
+                $music->addArtist(null);
             }
         }
 

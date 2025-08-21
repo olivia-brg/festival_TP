@@ -7,33 +7,38 @@
     <div class="artist-detail">
         <h1>{{ artist.name }}</h1>
         <p>
-            {{ artist.style }}<br><br>
+            {% for genre in artist.musicGenres %}
+            {{ genre }}<br>
+            {% endfor %}<br><br>
             {{ artist.description }}<br><br>
             {{ artist.mixDate|date('d/m') }} - {{ artist.mixTime|format_time( 'short') }}<br><br>
-            {% for genre in artist.musicGenres %}
-                {{ genre }}<br>
-            {% endfor %}<br><br>
-            <a href="{{ path('artist_update', { 'id': artist.id }) }}">Update</a>
-            <a href="{{ path('artist_delete', { 'id': artist.id, 'token': csrf_token('delete'~artist.id) } ) }}"
-               onclick="return confirm('Are you sure?')">Delete</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('artist_update', { 'id': artist.id }) }}">Update</a>
+                <a href="{{ path('artist_delete', { 'id': artist.id, 'token': csrf_token('delete'~artist.id) } ) }}"
+                   onclick="return confirm('Are you sure?')">Delete</a>
+            {% endif %}
         </p>
     </div>
     <a href="{{ path('artist_list', { 'page': 1 }) }}">< BACK TO LINE UP</a>
 
     <h3 style="margin: 2rem 0 -1rem 0">Musics</h3>
     <table>
-    <tr>
-        <th>Title</th>
-        <th>Style</th>
-        <th>Release</th>
-    </tr>
-    {% for music in artist.musics %}
         <tr>
-            <td>{{ music.title }}</td>
-            <td>{{ music.style }}</td>
-            <td>{{ music.releaseDate|date('d/m/y') }}</td>
+            <th>Title</th>
+            <th>Style</th>
+            <th>Release</th>
         </tr>
-    {% endfor %}
+        {% for music in artist.musics %}
+            <tr>
+                <td>{{ music.title }}</td>
+                <td>
+                    {% for genre in music.musicGenres %}
+                        {{ genre }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ music.releaseDate|date('d/m/y') }}</td>
+            </tr>
+        {% endfor %}
     </table>
 
 
